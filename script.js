@@ -1,103 +1,76 @@
-// Assignment Code
+//Assignment Code
+var upper = 'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split('');
+var lower = 'abcdefghijklmnopqrstuvwxyz'.split('');
+var numbers = '0123456789'.split('');
+var symbols = ["~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=", "/", "<", ">", "?"];
 var generateBtn = document.querySelector("#generate");
 
-// Write password to the #password input
 function writePassword() {
     var password = generatePassword();
     var passwordText = document.querySelector("#password");
-    //document.querySelector returns the first element within the document that matches the specified selector.
-    
-    passwordText.value = password;
-
+    passwordText.value = password
 }
-//validating length
-let passwordOption = askPasswordLength();
-function askPasswordLength() {
+
+generateBtn.addEventListener("click", writePassword);
+
+//MY CODE
+function getPasswordOptions() {
     var length = parseInt(
-        prompt("Hello, how long would you like your password to be? (8-128)")
+        prompt("Hello! How many characters would you like your password to be?")
     );
     if (isNaN(length) === true) {
         alert("Password needs an input for desired length. Try again.");
-        askPasswordLength();
-        return false;
+        getPasswordOptions();
+        return;
     }
-    else if ((length < 8) || (length > 128)) {
+    if ((length < 8) || (length > 128)) {
         alert("Password length must be between 8-128");
-        askPasswordLength();
-        return false;
+        getPasswordOptions();
+        return;
     }
-    else {
-        alert("Next, please choose your desired password options..");
-        return true;
+    var upperConfirm = confirm("Would you like an uppercase included in your password?");
+    var lowerConfirm = confirm("Would you like a lowercase included in your password?");
+    var numbersConfirm = confirm("Would you like a number included in your password?");
+    var symbolsConfirm = confirm("Would you like a special character included in your password?");
+    if (upperConfirm === false && !lowerConfirm && !numbersConfirm && !symbolsConfirm) {
+        alert("You must select at least one character, try again.");
+        return;
     }
+    var passwordOption = {
+        length: length,
+        upperConfirm: upperConfirm,
+        lowerConfirm: lowerConfirm,
+        numbersConfirm: numbersConfirm,
+        symbolsConfirm: symbolsConfirm,
+    }
+    return passwordOption;
 }
 
-//CODE WORKS//
-//Using ascii code 
-//creating functions that will generate random letters, uppercased and lowercased using ascii chart
-
-//uppercase letters // confirm if clicked yes or no to input into password.
-function upperCaseLetters() {
-    if (upper == true) {
-        return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+function generatePassword() {
+    var options = getPasswordOptions();
+    var result = [];
+    var potentialPassword = [];
+    if (options.upperConfirm) {
+        potentialPassword = potentialPassword.concat(upper)
     }
-    else {
-        return false;
+    if (options.lowerConfirm) {
+        potentialPassword = potentialPassword.concat(lower)
     }
+    if (options.numbersConfirm) {
+        potentialPassword = potentialPassword.concat(numbers)
+    }
+    if (options.symbolsConfirm) {
+        potentialPassword = potentialPassword.concat(symbols)
+    }
+    for (var i = 0; i < options.length; i++) {
+        var possibleChar = getRandomEl(potentialPassword);
+        result.push(possibleChar);
+    }
+    return result;
 }
-var upper = confirm("Would you like an uppercase included in your password?");
-console.log(upperCaseLetters());
 
-//lowercase letters
-function lowerCaseLetters() {
-    if (lower == true) {
-        return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-    }
-    else {
-        return false;
-    }
+function getRandomEl(arr) {
+    var index = Math.floor(Math.random() * arr.length);
+    var randEl = arr[index];
+    return randEl;
 }
-var lower = confirm("Would you like a lowercase included in your password?");
-console.log(lowerCaseLetters());
-
-//numerical values
-function numericalValues() {
-    if (numbers == true) {
-        return (Math.floor(Math.random() * 9) + 1);
-    }
-    else {
-        return false;
-    }
-}
-var numbers = confirm("Would you like a number included in your password?");
-console.log(numericalValues());
-
-//special characters
-function randomSpecialCharacters() {
-    var specialCharacters = ["~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=", "/", "<", ">", "?"];
-    if (characters == true) {
-        return specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
-    }
-    else {
-        return false;
-    }
-}
-var characters = confirm("Would you like a special character included in your password?");
-console.log(randomSpecialCharacters());
-
-
-
-
-
-
-
-
-// Add event listener to generate button
-generateBtn.addEventListener("click", writePassword);
-
-///still need to..
-//when confirmed whichever option, then ADD to pw and when not confirmed NOT input to pw.
-///when valid, password will display in box.
-
-///valide the user selected at least one character type.
-///and then when invalid, terminate password and start all over.
